@@ -1,7 +1,9 @@
+import 'package:bloc/bloc.dart';
 import 'package:client/repositories/user.dart';
+import 'package:equatable/equatable.dart';
 
-import 'auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+part 'auth_event.dart';
+part 'auth_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
@@ -16,9 +18,9 @@ class AuthenticationBloc
 
   Future<void> handleAppStarted(
       AppStarted event, Emitter<AuthenticationState> emit) async {
-    final bool hasToken = await userRepositories.hasToken();
+    final token = await userRepositories.hasToken();
 
-    if (hasToken) {
+    if (token) {
       emit(AuthenticationAuthenticated());
     } else {
       emit(AuthenticationUnauthenticated());

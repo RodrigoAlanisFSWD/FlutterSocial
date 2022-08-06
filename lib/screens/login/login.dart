@@ -1,4 +1,5 @@
 import 'package:client/bloc/login/login_bloc.dart';
+import 'package:client/repositories/user.dart';
 import 'package:client/widgets/Button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -31,78 +32,81 @@ class _LoginState extends State<Login> {
     }
 
     return Scaffold(
-        appBar: AppBar(title: const Text("Sign In")),
-        body: BlocListener(
-          listener: ((context, state) {
-            if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Sign In Failed"),
-                backgroundColor: Colors.red,
-              ));
-            }
-          }),
-          child: BlocBuilder(builder: ((context, state) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 350,
-                    child: TextField(
-                      controller: _email,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                          label: Text("Email"), prefixIcon: Icon(Icons.email)),
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  SizedBox(
-                    width: 350,
-                    child: TextField(
-                      controller: _password,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                          label: Text("Password"),
-                          prefixIcon: Icon(Icons.lock)),
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.all(20)),
-                  Button(
-                      size: const Size(350, 50),
-                      text: "Sign In",
-                      onPressed: () {
-                        _onLoginSubmit();
-                      }),
-                  const Padding(padding: EdgeInsets.all(5)),
-                  OutlinedButton.icon(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(350, 50)),
-                      icon: Image.asset(
-                        'assets/google.png',
-                        width: 25,
-                        height: 25,
-                      ),
-                      label: const Text(
-                        "Continue With Google",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("You Dont Have An Account ?"),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, "/sign-up");
-                          },
-                          child: const Text("click here"))
-                    ],
-                  )
-                ],
+      appBar: AppBar(title: const Text("Sign In")),
+      body: BlocListener<LoginBloc, LoginState>(
+        listener: ((context, state) {
+          if (state is LoginFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                "Sign In Failed",
+                style: TextStyle(color: Colors.white),
               ),
-            );
-          })),
-        ));
+              backgroundColor: Colors.red,
+            ));
+          }
+        }),
+        child: BlocBuilder<LoginBloc, LoginState>(builder: ((context, state) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 350,
+                  child: TextField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                        label: Text("Email"), prefixIcon: Icon(Icons.email)),
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.all(10)),
+                SizedBox(
+                  width: 350,
+                  child: TextField(
+                    controller: _password,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        label: Text("Password"), prefixIcon: Icon(Icons.lock)),
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.all(20)),
+                Button(
+                    size: const Size(350, 50),
+                    text: "Sign In",
+                    onPressed: () {
+                      _onLoginSubmit();
+                    }),
+                const Padding(padding: EdgeInsets.all(5)),
+                OutlinedButton.icon(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(350, 50)),
+                    icon: Image.asset(
+                      'assets/google.png',
+                      width: 25,
+                      height: 25,
+                    ),
+                    label: const Text(
+                      "Continue With Google",
+                      style: TextStyle(color: Colors.white),
+                    )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("You Dont Have An Account ?"),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/sign-up");
+                        },
+                        child: const Text("click here"))
+                  ],
+                )
+              ],
+            ),
+          );
+        })),
+      ),
+    );
   }
 
   Future<void> SignIn() async {

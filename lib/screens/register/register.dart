@@ -36,16 +36,19 @@ class _RegisterState extends State<Register> {
 
     return Scaffold(
         appBar: AppBar(title: const Text("Sign In")),
-        body: BlocListener(
+        body: BlocListener<RegisterBloc, RegisterState>(
           listener: ((context, state) {
             if (state is RegisterFailure) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Sign Up Failes"),
+                content: Text(
+                  "Sign Up Failed",
+                  style: TextStyle(color: Colors.white),
+                ),
                 backgroundColor: Colors.red,
               ));
             }
           }),
-          child: BlocBuilder(
+          child: BlocBuilder<RegisterBloc, RegisterState>(
             builder: (context, state) {
               return Center(
                 child: Column(
