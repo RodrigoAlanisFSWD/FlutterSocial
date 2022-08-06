@@ -21,21 +21,21 @@ class AuthenticationBloc
     if (hasToken) {
       emit(AuthenticationAuthenticated());
     } else {
-      emit(AuthenticationUnauthenticated())
+      emit(AuthenticationUnauthenticated());
     }
   }
 
   Future<void> handleLoggedIn(
       LoggedIn event, Emitter<AuthenticationState> emit) async {
-        emit(AuthenticationLoading());
-        await userRepositories.persisteToken(event.token);
-        emit(AuthenticationAuthenticated());
+    emit(AuthenticationLoading());
+    await userRepositories.persisteToken(event.token);
+    emit(AuthenticationAuthenticated());
   }
 
   Future<void> handleLoggedOut(
       LoggedOut event, Emitter<AuthenticationState> emit) async {
-        emit(AuthenticationLoading());
-        await userRepositories.deleteToken();
-        emit(AuthenticationUnauthenticated());
+    emit(AuthenticationLoading());
+    await userRepositories.deleteToken();
+    emit(AuthenticationUnauthenticated());
   }
 }
