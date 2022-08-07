@@ -19,3 +19,5 @@ class RegisterFailure extends RegisterState {
   @override
   List<Object> get props => [error];
 }
+
+class RegisterFinished extends RegisterState {}

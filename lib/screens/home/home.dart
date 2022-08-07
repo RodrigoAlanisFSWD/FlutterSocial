@@ -26,6 +26,8 @@ class _HomeState extends State<Home> {
                 const Text("Welcome To Social Flutter"),
                 const Padding(padding: EdgeInsets.all(10)),
                 Button(
+                  backgroundColor: Colors.blue,
+                  textColor: Colors.white,
                   size: const Size(350, 50),
                   text: "To Sign In",
                   onPressed: () {
@@ -34,6 +36,8 @@ class _HomeState extends State<Home> {
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
                 Button(
+                  backgroundColor: Colors.blue,
+                  textColor: Colors.white,
                   size: const Size(350, 50),
                   text: "To Profile",
                   onPressed: () {

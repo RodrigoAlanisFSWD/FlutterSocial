@@ -13,6 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({required this.userRepositories, required this.authenticationBloc})
       : super(LoginInitial()) {
     on<LoginSubmit>(handleLoginSubmit);
+    on<FinishLogin>(handleFinishLogin);
   }
 
   Future<void> handleLoginSubmit(
@@ -22,9 +23,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       final token = await userRepositories.login(event.email, event.password);
       authenticationBloc.add(LoggedIn(token: token));
-      emit(LoginInitial());
+      emit(LoginFinished());
     } catch (error) {
       emit(LoginFailure(error: error.toString()));
     }
+  }
+
+  handleFinishLogin(FinishLogin event, Emitter<LoginState> emit) {
+    emit(LoginInitial());
   }
 }

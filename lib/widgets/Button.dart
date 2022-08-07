@@ -7,22 +7,26 @@ class Button extends StatelessWidget {
       {Key? key,
       required this.size,
       required this.text,
-      required this.onPressed})
+      required this.onPressed,
+      required this.backgroundColor,
+      required this.textColor})
       : super(key: key);
 
   final Size size;
   final String text;
   final VoidCallback onPressed;
+  final Color backgroundColor;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.blue, minimumSize: size),
+            backgroundColor: backgroundColor, minimumSize: size),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: textColor),
         ));
   }
 }

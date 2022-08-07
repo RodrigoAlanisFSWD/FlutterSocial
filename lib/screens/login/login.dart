@@ -44,6 +44,11 @@ class _LoginState extends State<Login> {
               backgroundColor: Colors.red,
             ));
           }
+
+          if (state is LoginFinished) {
+            BlocProvider.of<LoginBloc>(context).add(FinishLogin());
+            Navigator.pop(context);
+          }
         }),
         child: BlocBuilder<LoginBloc, LoginState>(builder: ((context, state) {
           return Center(
@@ -71,6 +76,8 @@ class _LoginState extends State<Login> {
                 ),
                 const Padding(padding: EdgeInsets.all(20)),
                 Button(
+                    backgroundColor: Colors.blue,
+                    textColor: Colors.white,
                     size: const Size(350, 50),
                     text: "Sign In",
                     onPressed: () {

@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:client/main.dart';
 import 'package:client/models/user.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserRepositories {
   static String mainUrl = "http://192.168.100.76:8080/api/";
   var loginUrl = '$mainUrl/auth/sign-in';
   var registerUrl = '$mainUrl/auth/sign-up';
   var profileUrl = '$mainUrl/user/profile';
+  var avatarUrl = '$mainUrl/user/avatar';
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
   final Dio _dio = Dio();
@@ -66,5 +70,18 @@ class UserRepositories {
         id: res.data["user"]["id"],
         email: res.data["user"]["email"],
         username: res.data["user"]["username"]);
+  }
+
+  Future<int> uploadAvatar(File avatar, String token) async {
+    String fileName = avatar.path.split('/').last;
+    FormData formData = FormData.fromMap({
+      "avatar": await MultipartFile.fromFile(avatar.path, filename: fileName)
+    });
+
+    Response res = await _dio.post(avatarUrl,
+        data: formData,
+        options: Options(headers: {"Authorization": "Bearer $token"}));
+
+    return res.statusCode as int;
   }
 }
