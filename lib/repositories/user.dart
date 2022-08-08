@@ -1,22 +1,25 @@
 import 'dart:io';
 
 import 'package:client/main.dart';
+import 'package:client/models/tokens.dart';
 import 'package:client/models/user.dart';
+import 'package:client/repositories/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserRepositories {
-  static String mainUrl = "http://192.168.100.76:8080/api/";
-  var loginUrl = '$mainUrl/auth/sign-in';
-  var registerUrl = '$mainUrl/auth/sign-up';
-  var profileUrl = '$mainUrl/user/profile';
-  var avatarUrl = '$mainUrl/user/avatar';
+  var loginUrl = '/auth/sign-in';
+  var registerUrl = '/auth/sign-up';
+  var profileUrl = '/user/profile';
+  var avatarUrl = '/user/avatar';
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
-  final Dio _dio = Dio();
+
+  final RequestRepositories requestRepositories = RequestRepositories();
 
   Future<bool> hasToken() async {
+    requestRepositories.initApiClient();
     var value = await storage.read(key: 'token');
 
     if (value != null) {
@@ -30,8 +33,13 @@ class UserRepositories {
     await storage.write(key: 'token', value: token);
   }
 
-  Future<void> deleteToken() async {
+  Future<void> saveRefresh(String refresh) async {
+    await storage.write(key: 'refresh', value: refresh);
+  }
+
+  Future<void> deleteTokens() async {
     storage.delete(key: 'token');
+    storage.delete(key: 'refresh');
     storage.deleteAll();
   }
 
@@ -45,31 +53,31 @@ class UserRepositories {
     }
   }
 
-  Future<String> login(String email, String password) async {
-    Response res =
-        await _dio.post(loginUrl, data: {"email": email, "password": password});
+  Future<Tokens> login(String email, String password) async {
+    Response res = await requestRepositories.dio
+        .post(loginUrl, data: {"email": email, "password": password});
 
-    return res.data["token"];
+    return Tokens(token: res.data["token"], refresh: res.data["refresh"]);
   }
 
-  Future<String> register(
+  Future<Tokens> register(
       String username, String email, String password) async {
-    Response res = await _dio.post(registerUrl,
+    Response res = await requestRepositories.dio.post(registerUrl,
         data: {"username": username, "email": email, "password": password});
 
-    return res.data["token"];
+    return Tokens(token: res.data["token"], refresh: res.data["refresh"]);
   }
 
   Future<User> getProfile() async {
-    Response res = await _dio.get(profileUrl,
-        options: Options(headers: {
-          "Authorization": "Bearer ${await getToken()}",
-        }));
+    Response res = await requestRepositories.dio.get(
+      profileUrl,
+    );
 
     return User(
         id: res.data["user"]["id"],
         email: res.data["user"]["email"],
-        username: res.data["user"]["username"]);
+        username: res.data["user"]["username"],
+        avatarUrl: res.data["user"]["avatarUrl"]);
   }
 
   Future<int> uploadAvatar(File avatar, String token) async {
@@ -78,9 +86,10 @@ class UserRepositories {
       "avatar": await MultipartFile.fromFile(avatar.path, filename: fileName)
     });
 
-    Response res = await _dio.post(avatarUrl,
-        data: formData,
-        options: Options(headers: {"Authorization": "Bearer $token"}));
+    Response res = await requestRepositories.dio.post(
+      avatarUrl,
+      data: formData,
+    );
 
     return res.statusCode as int;
   }

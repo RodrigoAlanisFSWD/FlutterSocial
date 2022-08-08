@@ -31,13 +31,14 @@ class AuthenticationBloc
       LoggedIn event, Emitter<AuthenticationState> emit) async {
     emit(AuthenticationLoading());
     await userRepositories.persisteToken(event.token);
+    await userRepositories.saveRefresh(event.refresh);
     emit(AuthenticationAuthenticated());
   }
 
   Future<void> handleLoggedOut(
       LoggedOut event, Emitter<AuthenticationState> emit) async {
     emit(AuthenticationLoading());
-    await userRepositories.deleteToken();
+    await userRepositories.deleteTokens();
     emit(AuthenticationUnauthenticated());
   }
 }

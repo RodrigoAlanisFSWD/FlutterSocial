@@ -33,15 +33,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     }
 
     try {
-      final token = await userRepositories.register(
+      final tokens = await userRepositories.register(
           event.username, event.email, event.password);
-      final code = await userRepositories.uploadAvatar(event.avatar, token);
+      final code =
+          await userRepositories.uploadAvatar(event.avatar, tokens.token);
 
       if (code != 200) {
         return emit(const RegisterFailure(error: "Error At Uploading Avatar"));
       }
 
-      authenticationBloc.add(LoggedIn(token: token));
+      authenticationBloc
+          .add(LoggedIn(token: tokens.token, refresh: tokens.refresh));
       emit(RegisterFinished());
     } catch (error) {
       emit(RegisterFailure(error: error.toString()));

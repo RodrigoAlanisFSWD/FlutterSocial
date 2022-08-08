@@ -25,23 +25,33 @@ class _HomeState extends State<Home> {
               children: [
                 const Text("Welcome To Social Flutter"),
                 const Padding(padding: EdgeInsets.all(10)),
-                Button(
-                  backgroundColor: Colors.blue,
-                  textColor: Colors.white,
-                  size: const Size(350, 50),
-                  text: "To Sign In",
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/sign-in");
-                  },
-                ),
-                const Padding(padding: EdgeInsets.all(10)),
-                Button(
-                  backgroundColor: Colors.blue,
-                  textColor: Colors.white,
-                  size: const Size(350, 50),
-                  text: "To Profile",
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/profile");
+                BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                  builder: (context, state) {
+                    if (state is AuthenticationAuthenticated) {
+                      return Button(
+                        backgroundColor: Colors.blue,
+                        textColor: Colors.white,
+                        size: const Size(350, 50),
+                        text: "To Profile",
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/profile");
+                        },
+                      );
+                    }
+
+                    if (state is AuthenticationUnauthenticated) {
+                      return Button(
+                        backgroundColor: Colors.blue,
+                        textColor: Colors.white,
+                        size: const Size(350, 50),
+                        text: "To Sign In",
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/sign-in");
+                        },
+                      );
+                    }
+
+                    return const Text("");
                   },
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
