@@ -16,7 +16,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   void initState() {
-    BlocProvider.of<UserBloc>(context).add(LoadUser());
+    final userBloc = BlocProvider.of<UserBloc>(context);
+    if (userBloc.state is UserInitial) {
+      userBloc.add(LoadUser());
+    }
     super.initState();
   }
 

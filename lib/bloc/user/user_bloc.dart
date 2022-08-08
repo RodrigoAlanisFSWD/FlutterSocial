@@ -19,13 +19,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     emit(UserLoading());
-
-    try {
-      var user = await userRepositories.getProfile();
-      emit(UserLoaded(user: user));
-    } catch (e) {
-      emit(UserFailure(error: e.toString()));
-    }
+    var user = await userRepositories.getProfile();
+    emit(UserLoaded(user: user));
   }
 
   handleUnloadUser(
